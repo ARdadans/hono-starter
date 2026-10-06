@@ -465,9 +465,10 @@ const port = Number(process.env.PORT || 3000)
 const server = serve({
   fetch: app.fetch,
   port,
+  hostname: '0.0.0.0',
 })
 
-console.log(`Hono Todo API running on http://localhost:${port}`)
+console.log(`Hono Todo API running on http://0.0.0.0:${port}`)
 
 function shutdown() {
   console.log('Shutting down...')
