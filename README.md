@@ -1,80 +1,99 @@
 # Hono Todo API
 
-Simple REST API built with:
+A simple, lightweight REST API for managing todos, built with modern web technologies.
 
-- Hono
-- Node.js
-- TypeScript
-- SQLite
-- better-sqlite3
-- pnpm
+## Tech Stack
 
-No PostgreSQL, MySQL, Redis, ORM, or external database server is required.
+- **Hono** - Fast, lightweight web framework
+- **Node.js** - JavaScript runtime
+- **TypeScript** - Type-safe JavaScript
+- **SQLite** - Embedded database (via `better-sqlite3`)
+- **pnpm** - Fast, disk-efficient package manager
 
-SQLite database is stored in:
+> **No external database server required** — SQLite stores data locally in `data/app.db`
 
-```text
-data/app.db
-Requirements
-Node.js 24+
-pnpm 10+
-Install
+## Requirements
+
+- Node.js 24+
+- pnpm 10+
+
+## Installation
+
+```bash
 pnpm install
-Development
+```
+
+## Development
+
+```bash
 pnpm dev
+```
 
-Server:
+Server runs at: **http://localhost:3000**
 
-http://localhost:3000
-Production
+## Production
 
-Build:
-
+```bash
+# Build TypeScript to JavaScript
 pnpm build
 
-Start:
-
+# Start production server
 pnpm start
-API
-API information
-GET /
+```
 
-Returns the API description and endpoint list.
+## API Endpoints
 
-Health check
-GET /ping
+### API Information
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/` | Returns API description and endpoint list |
 
-Example:
+### Health Check
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/ping` | Health check endpoint |
 
+```bash
 curl http://localhost:3000/ping
+```
 
-Response:
-
+**Response:**
+```json
 {
   "pong": true
 }
-Todo endpoints
-Get all todos
-GET /api/todos
+```
+
+### Todos
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/todos` | Get all todos |
+| `GET` | `/api/todos/:id` | Get a single todo by ID |
+| `POST` | `/api/todos` | Create a new todo |
+| `PUT` | `/api/todos/:id` | Replace a todo (full update) |
+| `PATCH` | `/api/todos/:id` | Partially update a todo |
+| `DELETE` | `/api/todos/:id` | Delete a todo |
+
+#### Get All Todos
+```bash
 curl http://localhost:3000/api/todos
-Get one todo
-GET /api/todos/:id
+```
 
-Example:
-
+#### Get One Todo
+```bash
 curl http://localhost:3000/api/todos/1
-Create todo
-POST /api/todos
-Content-Type: application/json
+```
 
-Example:
-
+#### Create Todo
+```bash
 curl -X POST http://localhost:3000/api/todos \
   -H "Content-Type: application/json" \
   -d '{"title":"Learn Hono"}'
+```
 
-Response:
-
+**Response:**
+```json
 {
   "data": {
     "id": 1,
@@ -84,111 +103,93 @@ Response:
     "updated_at": "2026-01-01 12:00:00"
   }
 }
-Replace todo
-PUT /api/todos/:id
-Content-Type: application/json
+```
 
-Example:
-
+#### Replace Todo (Full Update)
+```bash
 curl -X PUT http://localhost:3000/api/todos/1 \
   -H "Content-Type: application/json" \
   -d '{"title":"Learn Hono REST API","completed":true}'
-Update todo
-PATCH /api/todos/:id
-Content-Type: application/json
+```
 
-Update title:
-
+#### Update Todo (Partial Update)
+```bash
+# Update title only
 curl -X PATCH http://localhost:3000/api/todos/1 \
   -H "Content-Type: application/json" \
   -d '{"title":"Learn SQLite"}'
 
-Mark completed:
-
+# Mark as completed
 curl -X PATCH http://localhost:3000/api/todos/1 \
   -H "Content-Type: application/json" \
   -d '{"completed":true}'
-Delete todo
-DELETE /api/todos/:id
+```
 
-Example:
-
+#### Delete Todo
+```bash
 curl -X DELETE http://localhost:3000/api/todos/1
-Docker
+```
 
-Build:
+## Docker
 
+### Build Image
+```bash
 docker build -t hono-todo .
+```
 
-Run:
-
+### Run with Volume (Recommended)
+```bash
 docker run --rm \
   -p 3000:3000 \
   -v hono-todo-data:/app/data \
   hono-todo
+```
 
-API:
+**API:** http://localhost:3000  
+**Health:** http://localhost:3000/ping  
+**Todos:** http://localhost:3000/api/todos
 
-http://localhost:3000
+The SQLite database persists in the Docker volume `hono-todo-data`, so removing the container doesn't delete the data.
 
-Health check:
-
-http://localhost:3000/ping
-
-Todos:
-
-http://localhost:3000/api/todos
-
-The SQLite database is stored in the Docker volume:
-
-hono-todo-data
-
-Therefore removing the container does not remove the database.
-
-Docker with local data directory
-
-You can also store the database directly on the server:
-
+### Run with Local Data Directory
+```bash
 mkdir -p data
-
 docker run --rm \
   -p 3000:3000 \
   -v "$(pwd)/data:/app/data" \
   hono-todo
+```
 
-The database will be:
+Database will be stored at: `data/app.db`
 
-data/app.db
-Environment variables
-PORT
+## Environment Variables
 
-Default:
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | `3000` | Server port |
+| `DATABASE_PATH` | `./data/app.db` | Path to SQLite database file |
 
-3000
+### Examples
 
-Example:
-
+```bash
+# Custom port
 PORT=8080 pnpm start
-DATABASE_PATH
 
-Default:
-
-./data/app.db
-
-Example:
-
+# Custom database path
 DATABASE_PATH=./data/my-database.db pnpm start
+```
 
-Docker default:
+**Docker default:** `/app/data/app.db`
 
-/app/data/app.db
-Project structure
+## Project Structure
+
+```
 hono-todo/
 ├── src/
-│   ├── db.ts
-│   └── index.ts
+│   ├── db.ts         # Database setup and queries
+│   └── index.ts      # Application entry point & routes
 ├── data/
-│   └── .gitkeep
+│   └── .gitkeep      # Keeps data directory in git
 ├── .dockerignore
 ├── .gitignore
 ├── Dockerfile
@@ -196,6 +197,8 @@ hono-todo/
 ├── pnpm-lock.yaml
 ├── README.md
 └── tsconfig.json
-License
+```
+
+## License
 
 MIT

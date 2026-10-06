@@ -12,10 +12,9 @@ COPY tsconfig.json ./
 COPY src ./src
 
 RUN pnpm build
-RUN pnpm prune --prod
 
 
-FROM node:24-bookworm-slim
+FROM node:24-bookworm-slim AS runner
 
 WORKDIR /app
 
@@ -24,10 +23,17 @@ ENV PORT=3000
 ENV DATABASE_PATH=/app/data/app.db
 
 COPY --from=builder /app/package.json ./
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/pnpm-lock.yaml ./
 COPY --from=builder /app/dist ./dist
 
-RUN mkdir -p /app/data
+RUN corepack enable \
+    && pnpm install --prod --frozen-lockfile \
+    && mkdir -p /app/data \
+    && addgroup --system --gid 1001 nodejs \
+    && adduser --system --uid 1001 hono \
+    && chown -R hono:nodejs /app
+
+USER hono
 
 EXPOSE 3000
 
