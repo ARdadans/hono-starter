@@ -2,42 +2,60 @@
 
 A simple, lightweight REST API for managing todos, built with modern web technologies.
 
+**Repository:** https://github.com/ARdadans/hono-starter.git
+
 ## Tech Stack
 
 - **Hono** - Fast, lightweight web framework
 - **Node.js** - JavaScript runtime
 - **TypeScript** - Type-safe JavaScript
 - **SQLite** - Embedded database (via `better-sqlite3`)
-- **pnpm** - Fast, disk-efficient package manager
 
 > **No external database server required** — SQLite stores data locally in `data/app.db`
 
 ## Requirements
 
 - Node.js 24+
-- pnpm 10+
+- Package manager: **npm** (included with Node.js) or **pnpm** (optional)
 
-## Installation
+## Quick Start
 
 ```bash
+# Clone the repository
+git clone https://github.com/ARdadans/hono-starter.git
+cd hono-starter
+
+# Install dependencies (use npm or pnpm)
+npm install
+# or
 pnpm install
-```
 
-## Development
-
-```bash
+# Start development server
+npm run dev
+# or
 pnpm dev
 ```
 
 Server runs at: **http://localhost:3000**
 
+## Development
+
+| Command | npm | pnpm |
+|---------|-----|------|
+| Install dependencies | `npm install` | `pnpm install` |
+| Start dev server (with hot reload) | `npm run dev` | `pnpm dev` |
+
 ## Production
 
 ```bash
 # Build TypeScript to JavaScript
+npm run build
+# or
 pnpm build
 
 # Start production server
+npm start
+# or
 pnpm start
 ```
 
@@ -173,9 +191,13 @@ Database will be stored at: `data/app.db`
 
 ```bash
 # Custom port
+PORT=8080 npm start
+# or
 PORT=8080 pnpm start
 
 # Custom database path
+DATABASE_PATH=./data/my-database.db npm start
+# or
 DATABASE_PATH=./data/my-database.db pnpm start
 ```
 
@@ -184,7 +206,7 @@ DATABASE_PATH=./data/my-database.db pnpm start
 ## Project Structure
 
 ```
-hono-todo/
+hono-starter/
 ├── src/
 │   ├── db.ts         # Database setup and queries
 │   └── index.ts      # Application entry point & routes
@@ -198,6 +220,15 @@ hono-todo/
 ├── README.md
 └── tsconfig.json
 ```
+
+## Package Manager Notes
+
+This project works with both **npm** and **pnpm**:
+
+- **npm** — Included with Node.js, no extra setup needed
+- **pnpm** — Faster, disk-efficient; enable with `corepack enable` or install separately
+
+Both `package-lock.json` (npm) and `pnpm-lock.yaml` (pnpm) are committed for reproducible installs.
 
 ## License
 
